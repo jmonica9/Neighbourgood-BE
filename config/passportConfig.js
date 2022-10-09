@@ -3,7 +3,8 @@ const bcrypt = require("bcryptjs");
 const localStrategy = require("passport-local").Strategy;
 const JWTStrategy = require("passport-jwt").Strategy;
 const ExtractJWT = require("passport-jwt").ExtractJwt;
-
+// const util = require("util");
+// const jwtVerifyAsync = util.promisify(jwt.verify);
 const secret = "secretcode";
 const passport = require("passport");
 
@@ -55,6 +56,16 @@ const options = {
   //so that ur req.user can be accurately recorded bc using cookies will not be using passport sessions
 };
 
+// router.use(async (req, res, next) => {
+//   const token = getToken(req);
+//   try {
+//     req.auth = await jwtVerifyAsync(token, req.app.get("your-secret"));
+//   } catch (err) {
+//     throw new Error(err);
+//   }
+//   next();
+// });
+
 passport.use(
   "jwt",
   new JWTStrategy(options, async (req, jwt_payload, done) => {
@@ -70,6 +81,7 @@ passport.use(
       if (user) {
         req.user = user; //<= so that any route that has the passport.authenticate("jwt", {session: false}) middleware will receive req.user upon successful authentication
         console.log("User found in DB", user);
+        //check expiry here alrdy then return aft that
         return done(null, user);
       } else {
         console.log("User not in db");
