@@ -11,6 +11,7 @@ const UserSchema = new mongoose.Schema(
     listingsWatchlist: { type: Array },
     reviews: { type: Array },
     appointments: { type: Array },
+    address: { type: String },
   },
   { timestamps: true }
 );
