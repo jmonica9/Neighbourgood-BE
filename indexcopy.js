@@ -13,6 +13,8 @@ const bcrypt = require("bcryptjs");
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
+// const util = require("util");
+// const jwtVerifyAsync = util.promisify(jwt.verify);
 
 //import routers
 const UserRouter = require("./routers/userRouter");
@@ -43,6 +45,15 @@ app.use(cookieParser("secretcode"));
 app.use(passport.initialize());
 app.use(passport.session());
 require("./config/passportConfig")(passport);
+// app.use(async (req, res, next) => {
+//   const token = getToken(req);
+//   try {
+//     req.auth = await jwtVerifyAsync(token, req.app.get("secretcode"));
+//   } catch (err) {
+//     throw new Error(err);
+//   }
+//   next();
+// });
 
 //----------------------------------------- END OF MIDDLEWARE---------------------------------------------------
 
@@ -58,12 +69,11 @@ app.use(express.json());
 app.use("/users", userRouter);
 
 //JWT token
-const maxAge = 3 * 24 * 60 * 60;
+const maxAge = 1 * 60;
 //3 days
 const createToken = (id) => {
-  //inbuilt methods inside
   return jwt.sign({ id }, "secretcode", {
-    expiresIn: maxAge,
+    expiresIn: "5s",
   });
 };
 
@@ -75,10 +85,8 @@ app.post("/login", (req, res, next) => {
     if (err) {
       console.log(err);
       return res.status(500).json;
-    }
-    if (!user) {
-      return res.send("No User Exists");
-    } else if (user) {
+    } else if (!user) return res.send("No User Exists");
+    else {
       console.log("authenticated");
       req.logIn(user, (err) => {
         if (err) {
@@ -100,7 +108,7 @@ app.post("/login", (req, res, next) => {
           },
           "response data"
         );
-        return res.send(req.user.username);
+        res.send(req.user.username);
         /*other way to create token & send status*/
         //   // const token = jwt.sign({ id: userInfo.id }, jwtSecret.secret, {
         //   //   expiresIn: 60 * 24,
@@ -164,6 +172,28 @@ app.get("/myUser", (req, res) => {
 });
 
 //test JWT token from cookie
+// app.get(
+//   "/protectedbyjwt",
+//   // (req, res) => {
+//   //   console.log("jwt route protected", req.user);
+//   //   passport.authenticate("jwt", { session: false }, (req, res, next) => {
+//   //     console.log(req.user, "hi");
+//   //     return res.json(req.user);
+//   //   });
+//   // }
+
+//   passport.authenticate("jwt", { session: false }, (err, user, info) => {
+//     if (err) {
+//       return res.send({ success: false, message: "authentication failed" });
+//     }
+//     console.log(req);
+//     console.log(req.cookies);
+//     console.log("jwt route protected");
+//     res.json(req.user);
+//   })
+// );
+
+//test JWT token from cookie
 app.get(
   "/protectedbyjwt",
   // (req, res) => {
@@ -173,16 +203,11 @@ app.get(
   //     return res.json(req.user);
   //   });
   // }
-  //no req.user
   passport.authenticate("jwt", { session: false }),
   (req, res, next) => {
-    console.log(req);
-    console.log(req.cookies);
     console.log("jwt route protected");
     res.json(req.user);
   }
-
-  //handle error gracefully if the token is expired
 );
 
 app.get("/logout", function (req, res) {
