@@ -1,9 +1,12 @@
 require("dotenv").config();
 const cors = require("cors");
 const express = require("express");
+const { createServer } = require("http");
+const { Server } = require("socket.io");
 const mongoose = require("mongoose");
 const PORT = process.env.PORT;
 const app = express();
+const httpServer = createServer(app);
 const connectDB = require("./config/database");
 connectDB();
 const passport = require("passport");
@@ -13,24 +16,39 @@ const bcrypt = require("bcryptjs");
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
+const socketIO = new Server(httpServer, {
+  cors: {
+    origin: "http://localhost:3001",
+  },
+});
 
 //import routers
 const UserRouter = require("./routers/userRouter");
-const ListingRouter = require("./routers/listingRouter");
 //import controllers
 const UserController = require("./controllers/userController");
-const ListingController = require("./controllers/listingController");
 //import models here
 const userModel = require("./models/userModel");
-const listingModel = require("./models/listingModel");
 const { create } = require("./models/userModel");
 
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+socketIO.on("connection", (socket) => {
+  console.log("connected");
+  //once backend receives a "join_room" message, then join (data.room), i.e. lobbyId
+  socket.on("testing", (data) => {
+    socket.emit("testing_received", data);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("🔥: A user disconnected");
+  });
+});
+
 app.use(
   cors({
-    origin: `http://localhost:3001`, // <-- location of the react app were connecting to
+    origin: "http://localhost:3001", // <-- location of the react app were connecting to
     credentials: true,
   })
 );
@@ -51,17 +69,14 @@ require("./config/passportConfig")(passport);
 
 //initialise controllers here
 const userController = new UserController(userModel);
-const listingController = new ListingController(listingModel, userModel);
 //initialise routers here - insert JWT here if need later
 const userRouter = new UserRouter(userController).routes();
-const listingRouter = new ListingRouter(listingController).routes();
 
 app.use(express.json());
 // app.use(cors("*"));
 
 //initialise routes here
 app.use("/users", userRouter);
-app.use("/listing", listingRouter);
 
 //JWT token
 const maxAge = 3 * 24 * 60 * 60;
@@ -74,10 +89,9 @@ const createToken = (id) => {
 };
 
 // Routes
-
 app.post("/login", (req, res, next) => {
-  console.log("login req body", req.body);
-  console.log("login route!");
+  // console.log("login req body", req.body);
+  // console.log("login route!");
   passport.authenticate("local", (err, user, info) => {
     if (err) {
       console.log(err);
@@ -97,16 +111,16 @@ app.post("/login", (req, res, next) => {
         const token = createToken(req.user._id);
         //send cookie to client browser
         res.cookie("jwt", token, { httpOnly: false, maxAge: maxAge * 1000 });
-        console.log(req.user, "req user");
+        // console.log(req.user, "req user");
 
-        console.log(
-          {
-            success: true,
-            token: "JWT " + token,
-            user: req.user,
-          },
-          "response data"
-        );
+        // console.log(
+        //   {
+        //     success: true,
+        //     token: "JWT " + token,
+        //     user: req.user,
+        //   },
+        //   "response data"
+        // );
         return res.send(req.user.username);
         /*other way to create token & send status*/
         //   // const token = jwt.sign({ id: userInfo.id }, jwtSecret.secret, {
@@ -166,7 +180,7 @@ app.post("/register", (req, res) => {
 
 app.get("/myUser", (req, res) => {
   //req.user only exist when u activate a passport
-  console.log(req.user, "req user");
+  // console.log(req.user, "req user");
   res.send(req.user); // The req.user stores the entire user that has been authenticated inside of it.
 });
 
@@ -183,9 +197,9 @@ app.get(
   //no req.user
   passport.authenticate("jwt", { session: false }),
   (req, res, next) => {
-    console.log(req);
-    console.log(req.cookies);
-    console.log("jwt route protected");
+    // console.log(req);
+    // console.log(req.cookies);
+    // console.log("jwt route protected");
     res.json(req.user);
   }
 
@@ -209,6 +223,6 @@ app.get("/logout", function (req, res) {
 
 //----------------------------------------- END OF ROUTES---------------------------------------------------
 
-app.listen(PORT, () => {
-  console.log(`Express app listening on port ${PORT}!`);
+httpServer.listen(PORT, () => {
+  console.log(`Http listening on ${PORT}`);
 });
