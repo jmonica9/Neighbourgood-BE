@@ -16,11 +16,6 @@ const bcrypt = require("bcryptjs");
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
-const socketIO = new Server(httpServer, {
-  cors: {
-    origin: "http://localhost:3001",
-  },
-});
 
 //import routers
 const UserRouter = require("./routers/userRouter");
@@ -33,25 +28,13 @@ const { create } = require("./models/userModel");
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-socketIO.on("connection", (socket) => {
-  console.log("connected");
-  //once backend receives a "join_room" message, then join (data.room), i.e. lobbyId
-  socket.on("testing", (data) => {
-    socket.emit("testing_received", data);
-  });
-
-  socket.on("disconnect", () => {
-    console.log("🔥: A user disconnected");
-  });
-});
-
 app.use(
   cors({
     origin: "http://localhost:3001", // <-- location of the react app were connecting to
     credentials: true,
   })
 );
+
 app.use(
   session({
     //take cookie/session unreadable
@@ -222,6 +205,24 @@ app.get("/logout", function (req, res) {
 });
 
 //----------------------------------------- END OF ROUTES---------------------------------------------------
+
+const socketIO = new Server(httpServer, {
+  cors: {
+    origin: "http://localhost:3001",
+  },
+});
+
+socketIO.on("connection", (socket) => {
+  console.log("connected");
+  //once backend receives a "join_room" message, then join (data.room), i.e. lobbyId
+  socket.on("testing", (data) => {
+    socket.emit("testing_received", data);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("🔥: A user disconnected");
+  });
+});
 
 httpServer.listen(PORT, () => {
   console.log(`Http listening on ${PORT}`);
