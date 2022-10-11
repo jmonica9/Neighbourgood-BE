@@ -3,8 +3,10 @@ const ListingSchema = new mongoose.Schema(
   {
     userId: { type: String, required: true, unique: true },
     requestorIds: { type: Array },
+    title: { type: String },
     type: { type: String, required: true },
     category: { type: String, required: true, default: "Others" },
+    image: { type: String },
     reserved: { type: Boolean },
     reservedBy: { type: Array },
     dateOfTransaction: { type: Date },
