@@ -16,10 +16,13 @@ const jwt = require("jsonwebtoken");
 
 //import routers
 const UserRouter = require("./routers/userRouter");
+const ListingRouter = require("./routers/listingRouter");
 //import controllers
 const UserController = require("./controllers/userController");
+const ListingController = require("./controllers/listingController");
 //import models here
 const userModel = require("./models/userModel");
+const listingModel = require("./models/listingModel");
 const { create } = require("./models/userModel");
 
 // Middleware
@@ -27,7 +30,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: "http://localhost:3000", // <-- location of the react app were connecting to
+    origin: `http://localhost:3001`, // <-- location of the react app were connecting to
     credentials: true,
   })
 );
@@ -48,14 +51,17 @@ require("./config/passportConfig")(passport);
 
 //initialise controllers here
 const userController = new UserController(userModel);
+const listingController = new ListingController(listingModel, userModel);
 //initialise routers here - insert JWT here if need later
 const userRouter = new UserRouter(userController).routes();
+const listingRouter = new ListingRouter(listingController).routes();
 
 app.use(express.json());
 // app.use(cors("*"));
 
 //initialise routes here
 app.use("/users", userRouter);
+app.use("/listing", listingRouter);
 
 //JWT token
 const maxAge = 3 * 24 * 60 * 60;
@@ -68,6 +74,7 @@ const createToken = (id) => {
 };
 
 // Routes
+
 app.post("/login", (req, res, next) => {
   console.log("login req body", req.body);
   console.log("login route!");

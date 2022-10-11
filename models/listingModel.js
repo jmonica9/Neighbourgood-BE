@@ -5,7 +5,7 @@ const ListingSchema = new mongoose.Schema(
     requestorIds: { type: Array },
     title: { type: String },
     type: { type: String, required: true },
-    category: { type: String, required: true, default: "Others" },
+    categories: { type: Array, required: true, default: ["Others"] },
     image: { type: String },
     reserved: { type: Boolean },
     reservedBy: { type: Array },
@@ -16,6 +16,7 @@ const ListingSchema = new mongoose.Schema(
     completed: { type: Boolean },
     like: { type: Number },
     comment: { type: Array },
+    description: { type: String },
   },
   { timestamps: true }
 );
