@@ -27,6 +27,7 @@ const ListingController = require("./controllers/listingController");
 const AuthController = require("./controllers/authController");
 //import models here
 const userModel = require("./models/userModel");
+const listingModel = require("./models/listingModel");
 const { create } = require("./models/userModel");
 
 // Middleware
