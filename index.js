@@ -1,9 +1,12 @@
 require("dotenv").config();
 const cors = require("cors");
 const express = require("express");
+const { createServer } = require("http");
+const { Server } = require("socket.io");
 const mongoose = require("mongoose");
 const PORT = process.env.PORT;
 const app = express();
+const httpServer = createServer(app);
 const connectDB = require("./config/database");
 connectDB();
 const passport = require("passport");
@@ -24,7 +27,6 @@ const ListingController = require("./controllers/listingController");
 const AuthController = require("./controllers/authController");
 //import models here
 const userModel = require("./models/userModel");
-const listingModel = require("./models/listingModel");
 const { create } = require("./models/userModel");
 
 // Middleware
@@ -32,10 +34,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: `http://localhost:3001`, // <-- location of the react app were connecting to
+    origin: "http://localhost:3001", // <-- location of the react app were connecting to
     credentials: true,
   })
 );
+
 app.use(
   session({
     //take cookie/session unreadable
@@ -67,19 +70,26 @@ app.use("/users", userRouter);
 app.use("/listing", listingRouter);
 app.use("/auth", authRouter);
 
-//test JWT token from cookie
-app.get(
-  "/jwtUser",
+//----------------------------------------- END OF ROUTES---------------------------------------------------
 
-  passport.authenticate("jwt", { session: false }),
-  (req, res, next) => {
-    console.log(req);
-    console.log(req.cookies);
-    console.log("jwt route protected");
-    res.json(req.user);
-  }
-);
+const socketIO = new Server(httpServer, {
+  cors: {
+    origin: "http://localhost:3001",
+  },
+});
 
-app.listen(PORT, () => {
-  console.log(`Express app listening on port ${PORT}!`);
+socketIO.on("connection", (socket) => {
+  console.log("connected");
+  //once backend receives a "join_room" message, then join (data.room), i.e. lobbyId
+  socket.on("testing", (data) => {
+    socket.emit("testing_received", data);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("🔥: A user disconnected");
+  });
+});
+
+httpServer.listen(PORT, () => {
+  console.log(`Http listening on ${PORT}`);
 });
