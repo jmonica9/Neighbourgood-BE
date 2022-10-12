@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const PORT = process.env.PORT;
 const app = express();
 const httpServer = createServer(app);
+const http = require("http").Server(app);
 const connectDB = require("./config/database");
 connectDB();
 const passport = require("passport");
@@ -91,6 +92,8 @@ socketIO.on("connection", (socket) => {
   });
 });
 
-httpServer.listen(PORT, () => {
-  console.log(`Http listening on ${PORT}`);
+//----------------------------------------- END OF ROUTES---------------------------------------------------
+
+app.listen(PORT, () => {
+  console.log(`Express app listening on port ${PORT}!`);
 });
