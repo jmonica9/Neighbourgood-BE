@@ -10,9 +10,9 @@ module.exports = (socketIO) => {
       console.log("🔥: A user disconnected");
     });
 
-    socket.on("testing1", (data) => {
-      console.log("backend recieved");
-      socket.emit("testing1_recieved", data);
+    socket.on("user", (data) => {
+      console.log("user log in BE received,emitting data to FE ", data);
+      socket.emit("user", data);
     });
   });
 };
