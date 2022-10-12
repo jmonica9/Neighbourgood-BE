@@ -4,6 +4,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const PORT = process.env.PORT;
 const app = express();
+const http = require("http").Server(app);
 const connectDB = require("./config/database");
 connectDB();
 const passport = require("passport");
@@ -107,15 +108,7 @@ app.post("/login", (req, res, next) => {
           },
           "response data"
         );
-        return res.send(req.user.username);
-        /*other way to create token & send status*/
-        //   // const token = jwt.sign({ id: userInfo.id }, jwtSecret.secret, {
-        //   //   expiresIn: 60 * 24,
-        //   // });
-        // res.status(200).json({ user: user._id, status: true });
-        //     return res
-        //       .status(200)
-        //       .send({ auth: true, token, message: "User found and logged in" });
+        return res.send(req.user);
       });
     }
   })(req, res, next);
@@ -208,6 +201,19 @@ app.get("/logout", function (req, res) {
 });
 
 //----------------------------------------- END OF ROUTES---------------------------------------------------
+
+// SOCKETS
+const socketIO = require("socket.io")(http, {
+  cors: {
+    origin: "*",
+  },
+});
+socketIO.on("connection", (socket) => {
+  //once backend receives a "join_room" message, then join (data.room), i.e. lobbyId
+  socket.on("successful connection", (data) => {
+    socket.join(data.room);
+  });
+});
 
 app.listen(PORT, () => {
   console.log(`Express app listening on port ${PORT}!`);
