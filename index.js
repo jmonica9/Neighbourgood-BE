@@ -32,6 +32,7 @@ const listingModel = require("./models/listingModel");
 const { create } = require("./models/userModel");
 
 // Middleware
+app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
@@ -64,7 +65,6 @@ const authController = new AuthController(userModel);
 const userRouter = new UserRouter(userController).routes();
 const listingRouter = new ListingRouter(listingController).routes();
 const authRouter = new AuthRouter(authController).routes();
-app.use(express.json());
 // app.use(cors("*"));
 
 //initialise routes here
@@ -80,20 +80,10 @@ const socketIO = new Server(httpServer, {
   },
 });
 
-socketIO.on("connection", (socket) => {
-  console.log("connected");
-  //once backend receives a "join_room" message, then join (data.room), i.e. lobbyId
-  socket.on("testing", (data) => {
-    socket.emit("testing_received", data);
-  });
-
-  socket.on("disconnect", () => {
-    console.log("🔥: A user disconnected");
-  });
-});
+require("./sockets")(socketIO);
 
 //----------------------------------------- END OF ROUTES---------------------------------------------------
 
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
   console.log(`Express app listening on port ${PORT}!`);
 });
