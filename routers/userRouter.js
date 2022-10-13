@@ -7,7 +7,7 @@ class UserRouter {
   }
   routes() {
     router.get("/", this.controller.getAll);
-
+    router.get("/:userId", this.controller.getOne);
     return router;
   }
 }

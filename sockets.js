@@ -6,13 +6,12 @@ module.exports = (socketIO) => {
       socket.emit("testing_received", data);
     });
 
-    socket.on("disconnect", () => {
-      console.log("🔥: A user disconnected");
+    socket.on("userData", (data) => {
+      socket.emit("userInfo", data);
     });
 
-    socket.on("testing1", (data) => {
-      console.log("backend recieved");
-      socket.emit("testing1_recieved", data);
+    socket.on("disconnect", () => {
+      console.log("🔥: A user disconnected");
     });
   });
 };

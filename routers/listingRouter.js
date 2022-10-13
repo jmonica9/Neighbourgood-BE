@@ -8,6 +8,7 @@ class ListingRouter {
   routes() {
     router.get("/", this.controller.getAll);
     router.post("/", this.controller.insertOne);
+    router.get("/:userId", this.controller.getAllFromUser);
 
     return router;
   }
