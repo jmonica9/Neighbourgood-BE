@@ -102,6 +102,7 @@ class AuthController extends BaseController {
   };
 
   logout = async (req, res) => {
+    console.log("logout route!");
     req.logout(function (err) {
       if (err) {
         console.log(err);
