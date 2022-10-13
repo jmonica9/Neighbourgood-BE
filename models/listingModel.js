@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 const ListingSchema = new mongoose.Schema(
   {
-    userId: { type: String, required: true, unique: true },
+    userId: { type: String, required: true },
+    username: { type: String, required: true },
     requestorIds: { type: Array },
     title: { type: String },
     type: { type: String, required: true },

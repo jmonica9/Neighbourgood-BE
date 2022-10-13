@@ -5,16 +5,10 @@ class UserController extends BaseController {
   }
 
   getOne = async (req, res) => {
-    const { name, email } = req.body;
-    console.log("here");
-    console.log(name, email);
+    const { userId } = req.params;
 
     try {
-      const user = await this.model.findOneAndUpdate(
-        { email: email },
-        { $setOnInsert: { name: name } },
-        { upsert: true, new: true }
-      );
+      const user = await this.model.findOne({ _id: userId });
       return res.json(user);
     } catch (err) {
       return res.status(400).json({ error: true, msg: err });
