@@ -67,6 +67,22 @@ class ListingController extends BaseController {
       return res.status(400).json({ error: true, msg: err });
     }
   };
+
+  addUserRequest = async (req, res) => {
+    console.log("this ran");
+    const { listing, userId } = req.body;
+    console.log(listing, userId);
+    try {
+      const response = await this.model.findOneAndUpdate(
+        { _id: listing._id },
+        { $addToSet: { requestorIds: userId } },
+        { upsert: true, new: true }
+      );
+      return res.json(response);
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  };
 }
 
 module.exports = ListingController;
