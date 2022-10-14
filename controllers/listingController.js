@@ -105,9 +105,10 @@ class ListingController extends BaseController {
 
   getAllFromUser = async (req, res) => {
     const { userId } = req.params;
-
+    console.log("GET FRIENDSSS ROUTEEEE");
     try {
       const listings = await this.model.find({ userId: userId }).exec();
+      console.log("get all from user!");
       return res.json(listings);
     } catch (err) {
       return res.status(400).json({ error: true, msg: err });

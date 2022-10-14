@@ -8,6 +8,8 @@ class ListingRouter {
   routes() {
     router.get("/", this.controller.getAll);
     router.post("/", this.controller.insertOne);
+    //all listings for user
+    router.get("/user/:userId", this.controller.getAllFromUser);
     //all listings for one type where user is inside the requestorIds
     router.get("/:type/:userId/watchlist", this.controller.getMyTypeWatchlist);
     // all listings for one type
@@ -16,8 +18,6 @@ class ListingRouter {
     router.get("/:type/:userId", this.controller.getMyTypeListings);
     //add requestorid
     router.post("/request", this.controller.addUserRequest);
-    //all listings for user
-    router.get("/:userId", this.controller.getAllFromUser);
 
     return router;
   }

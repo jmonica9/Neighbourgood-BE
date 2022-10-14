@@ -60,7 +60,7 @@ require("./config/passportConfig")(passport);
 //----------------------------------------- END OF MIDDLEWARE---------------------------------------------------
 
 //initialise controllers here
-const userController = new UserController(userModel);
+const userController = new UserController(userModel, listingModel);
 const listingController = new ListingController(listingModel, userModel);
 const authController = new AuthController(userModel);
 //initialise routers here - insert JWT here if need later
