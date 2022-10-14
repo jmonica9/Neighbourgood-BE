@@ -10,5 +10,10 @@ module.exports = (socketIO) => {
       console.log("user log in BE received,emitting data to FE ", data);
       socket.emit("user", data);
     });
+
+    socket.on("user updated", () => {
+      console.log("userinfo recieved");
+      socket.emit("updating user info");
+    });
   });
 };

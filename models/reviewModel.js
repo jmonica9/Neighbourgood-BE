@@ -1,8 +1,10 @@
 const mongoose = require("mongoose");
 const ReviewSchema = new mongoose.Schema(
   {
-    requestorId: { type: String, required: true, unique: true },
-    ownerId: { type: String, required: true, unique: true },
+    requestorId: { type: String, required: true },
+    ownerId: { type: String, required: true },
+    reviewText: { type: String },
+    type: { type: String },
   },
   { timestamps: true }
 );
