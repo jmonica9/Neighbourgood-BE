@@ -6,7 +6,7 @@ const ListingSchema = new mongoose.Schema(
     title: { type: String },
     type: { type: String, required: true },
     categories: { type: Array, required: true, default: ["Others"] },
-    image: { type: String },
+    image: { type: Buffer },
     reserved: { type: Boolean },
     reservedBy: { type: Array },
     dateOfTransaction: { type: Date },

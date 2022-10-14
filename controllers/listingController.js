@@ -19,6 +19,7 @@ class ListingController extends BaseController {
         description: description,
         type: type,
       });
+
       return res.json(listing);
     } catch (err) {
       return res.status(400).json({ error: true, msg: err });
@@ -42,6 +43,14 @@ class ListingController extends BaseController {
     }
   };
 
+  // deprecated code
+  //   b64DecodeUnicode = (str)=> {
+  //       // Going backwards: from bytestream, to percent-encoding, to original string.
+  //       return decodeURIComponent(atob(str).split('').map(function(c) {
+  //           return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  //       }).join(''));
+  //   }
+
   getTypeListings = async (req, res) => {
     console.log("get type listings route");
     console.log(req.params, "req params");
@@ -49,6 +58,8 @@ class ListingController extends BaseController {
     let requestedtype = type;
     try {
       const listings = await this.model.find({ type: requestedtype });
+      // listings.image = new Buffer(data.photo.toString(), "base64");
+
       return res.json(listings);
     } catch (err) {
       return res.status(400).json({ error: true, msg: err });

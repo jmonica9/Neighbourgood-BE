@@ -17,6 +17,7 @@ const bcrypt = require("bcryptjs");
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
+const multer = require("multer");
 
 //import routers
 const UserRouter = require("./routers/userRouter");
@@ -33,8 +34,9 @@ const { create } = require("./models/userModel");
 
 // Middleware
 app.use(express.json());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// Make sure you add these two lines below
+app.use(bodyParser.json({ limit: "16mb", extended: true }));
+app.use(bodyParser.urlencoded({ limit: "16mb", extended: true }));
 app.use(
   cors({
     origin: "http://localhost:3001", // <-- location of the react app were connecting to
