@@ -14,6 +14,10 @@ class ListingRouter {
     router.get("/:type", this.controller.getTypeListings);
     //my own listings according to type
     router.get("/:type/:userId", this.controller.getMyTypeListings);
+    //add requestorid
+    router.post("/request", this.controller.addUserRequest);
+    //all listings for user
+    router.get("/:userId", this.controller.getAllFromUser);
 
     return router;
   }

@@ -1,18 +1,22 @@
 const BaseController = require("./baseController");
 class ListingController extends BaseController {
-  constructor(model, usermodel) {
+  constructor(model, userModel) {
     //base model
     super(model);
+    this.userModel = userModel;
   }
 
   insertOne = async (req, res) => {
     console.log("reqbody", req.body);
-    const { userId, title, image, categories, description, type } = req.body;
+    const { userId, title, image, categories, description, type, username } =
+      req.body;
     console.log("inserting!");
 
     try {
+      console.log("trying..lol");
       const listing = await this.model.create({
         userId: userId,
+        username: username,
         title: title,
         image: image,
         categories: categories,
@@ -25,7 +29,7 @@ class ListingController extends BaseController {
       return res.status(400).json({ error: true, msg: err });
     }
   };
-
+  // to be modified
   getOne = async (req, res) => {
     const { name, email } = req.body;
     console.log("here");
@@ -94,6 +98,33 @@ class ListingController extends BaseController {
         requestorIds: requestedUserId,
       });
       return res.json(listings);
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  };
+
+  getAllFromUser = async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+      const listings = await this.model.find({ userId: userId }).exec();
+      return res.json(listings);
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  };
+
+  addUserRequest = async (req, res) => {
+    console.log("this ran");
+    const { listing, userId } = req.body;
+    console.log(listing, userId);
+    try {
+      const response = await this.model.findOneAndUpdate(
+        { _id: listing._id },
+        { $addToSet: { requestorIds: userId } },
+        { upsert: true, new: true }
+      );
+      return res.json(response);
     } catch (err) {
       return res.status(400).json({ error: true, msg: err });
     }
