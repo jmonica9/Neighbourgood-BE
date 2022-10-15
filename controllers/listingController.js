@@ -12,10 +12,10 @@ class ListingController extends BaseController {
   sortByCategories = async (req, res) => {
     const { type } = req.params;
     const { categories } = req.body;
-    console.log("sort by categories!!");
-    console.log("type req.params", type);
-    console.log("req.body", req.body);
-    console.log("categories from req.body", categories);
+    // console.log("sort by categories!!");
+    // console.log("type req.params", type);
+    // console.log("req.body", req.body);
+    // console.log("categories from req.body", categories);
 
     try {
       // const listing = await this.model.aggregate({
@@ -26,7 +26,7 @@ class ListingController extends BaseController {
         type: type,
       });
 
-      console.log(listing, "after sorting");
+      // console.log(listing, "after sorting");
       return res.json(listing);
     } catch (err) {
       return res.status(400).json({ error: true, msg: err });
@@ -35,8 +35,8 @@ class ListingController extends BaseController {
   //deleteOne({ size: 'large' }
   deleteOne = async (req, res) => {
     const { listingId } = req.params;
-    console.log("listingid req.params", listingId);
-    console.log("delete route!");
+    // console.log("listingid req.params", listingId);
+    // console.log("delete route!");
 
     try {
       const user = await this.model.deleteOne({ _id: listingId });
@@ -47,10 +47,10 @@ class ListingController extends BaseController {
   };
 
   insertOne = async (req, res) => {
-    console.log("reqbody", req.body);
+    // console.log("reqbody", req.body);
     const { userId, title, image, categories, description, type, username } =
       req.body;
-    console.log("inserting!");
+    // console.log("inserting!");
 
     try {
       const uploadImg = await cloudinary.uploader.upload(image, {
@@ -82,8 +82,8 @@ class ListingController extends BaseController {
   // to be modified
   getOne = async (req, res) => {
     const { name, email } = req.body;
-    console.log("here");
-    console.log(name, email);
+    // console.log("here");
+    // console.log(name, email);
 
     try {
       const user = await this.model.findOneAndUpdate(
@@ -106,8 +106,8 @@ class ListingController extends BaseController {
   //   }
 
   getTypeListings = async (req, res) => {
-    console.log("get type listings route");
-    console.log(req.params, "req params");
+    // console.log("get type listings route");
+    // console.log(req.params, "req params");
     const { type } = req.params;
     let requestedtype = type;
     try {
@@ -120,8 +120,8 @@ class ListingController extends BaseController {
     }
   };
   getMyTypeListings = async (req, res) => {
-    console.log("get my type listings route");
-    console.log(req.params, "req params");
+    // console.log("get my type listings route");
+    // console.log(req.params, "req params");
     const { type, userId } = req.params;
     let requestedtype = type;
     let requestedUserId = userId;
@@ -137,8 +137,8 @@ class ListingController extends BaseController {
   };
 
   getMyTypeWatchlist = async (req, res) => {
-    console.log("get my type listings route");
-    console.log(req.params, "req params");
+    // console.log("get my type listings route");
+    // console.log(req.params, "req params");
     const { type, userId } = req.params;
     let requestedtype = type;
     let requestedUserId = userId;
@@ -155,10 +155,10 @@ class ListingController extends BaseController {
 
   getAllFromUser = async (req, res) => {
     const { userId } = req.params;
-    console.log("GET FRIENDSSS ROUTEEEE");
+    // console.log("GET FRIENDSSS ROUTEEEE");
     try {
       const listings = await this.model.find({ userId: userId }).exec();
-      console.log("get all from user!");
+      // console.log("get all from user!");
       return res.json(listings);
     } catch (err) {
       return res.status(400).json({ error: true, msg: err });
@@ -166,14 +166,30 @@ class ListingController extends BaseController {
   };
 
   addUserRequest = async (req, res) => {
-    console.log("this ran");
+    // console.log("this ran");
     const { listing, userId } = req.body;
-    console.log(listing, userId);
+    // console.log(listing, userId);
     try {
       const response = await this.model.findOneAndUpdate(
         { _id: listing._id },
         { $addToSet: { requestorIds: userId } },
         { upsert: true, new: true }
+      );
+      return res.json(response);
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  };
+
+  withdrawUserRequest = async (req, res) => {
+    console.log("withdrawal ran");
+    const { listing, userId } = req.body;
+    console.log(listing, userId);
+    try {
+      const response = await this.model.findOneAndUpdate(
+        { _id: listing._id },
+        { $pull: { requestorIds: userId } },
+        { new: true }
       );
       return res.json(response);
     } catch (err) {
