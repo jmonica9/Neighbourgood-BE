@@ -10,6 +10,7 @@ const httpServer = createServer(app);
 const http = require("http").Server(app);
 const connectDB = require("./config/database");
 connectDB();
+//passport auth
 const passport = require("passport");
 const passportLocal = require("passport-local").Strategy;
 const cookieParser = require("cookie-parser");
@@ -33,10 +34,10 @@ const listingModel = require("./models/listingModel");
 const { create } = require("./models/userModel");
 
 // Middleware
-app.use(express.json());
+// app.use(express.json());
 // Make sure you add these two lines below
-app.use(bodyParser.json({ limit: "16mb", extended: true }));
-app.use(bodyParser.urlencoded({ limit: "16mb", extended: true }));
+app.use(bodyParser.json({ limit: 52428800, extended: false }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
   cors({
     origin: "http://localhost:3001", // <-- location of the react app were connecting to

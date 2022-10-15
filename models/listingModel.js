@@ -8,6 +8,14 @@ const ListingSchema = new mongoose.Schema(
     type: { type: String, required: true },
     categories: { type: Array, required: true, default: ["Others"] },
     image: { type: String },
+    cloudimg: {
+      public_id: {
+        type: String,
+      },
+      url: {
+        type: String,
+      },
+    },
     reserved: { type: Boolean },
     reservedBy: { type: Array },
     dateOfTransaction: { type: Date },
