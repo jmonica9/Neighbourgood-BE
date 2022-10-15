@@ -9,7 +9,6 @@ class UserRouter {
     router.get("/", this.controller.getAll);
     router.get("/:userId", this.controller.getOne);
     router.put("/:userId", this.controller.updateOne);
-
     return router;
   }
 }
