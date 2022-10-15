@@ -24,13 +24,16 @@ const multer = require("multer");
 const UserRouter = require("./routers/userRouter");
 const ListingRouter = require("./routers/listingRouter");
 const AuthRouter = require("./routers/authRouter");
+const ChatRouter = require("./routers/chatRouter");
 //import controllers
 const UserController = require("./controllers/userController");
 const ListingController = require("./controllers/listingController");
 const AuthController = require("./controllers/authController");
+const ChatController = require("./controllers/chatController");
 //import models here
 const userModel = require("./models/userModel");
 const listingModel = require("./models/listingModel");
+const chatModel = require("./models/chatModel");
 const { create } = require("./models/userModel");
 
 // Middleware
@@ -64,16 +67,19 @@ require("./config/passportConfig")(passport);
 const userController = new UserController(userModel, listingModel);
 const listingController = new ListingController(listingModel, userModel);
 const authController = new AuthController(userModel);
+const chatController = new ChatController(chatModel, listingModel);
 //initialise routers here - insert JWT here if need later
 const userRouter = new UserRouter(userController).routes();
 const listingRouter = new ListingRouter(listingController).routes();
 const authRouter = new AuthRouter(authController).routes();
+const chatRouter = new ChatRouter(chatController).routes();
 // app.use(cors("*"));
 
 //initialise routes here
 app.use("/users", userRouter);
 app.use("/listing", listingRouter);
 app.use("/auth", authRouter);
+app.use("/chatroom", chatRouter);
 
 //----------------------------------------- END OF ROUTES---------------------------------------------------
 
