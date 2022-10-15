@@ -55,7 +55,9 @@ class ListingController extends BaseController {
     try {
       const uploadImg = await cloudinary.uploader.upload(image, {
         folder: `${type}`,
-        //width: put here,
+        // max_width: 150,
+        // min_width: 100,
+        // width: "17vh",
         //crop:scale / or wtv
       });
       const listing = await this.model.create({
