@@ -1,10 +1,50 @@
 const BaseController = require("./baseController");
+const cloudinary = require("../config/cloudinaryConfig");
+
 class ListingController extends BaseController {
   constructor(model, userModel) {
     //base model
     super(model);
     this.userModel = userModel;
   }
+
+  //sort by categories
+  sortByCategories = async (req, res) => {
+    const { type } = req.params;
+    const { categories } = req.body;
+    console.log("sort by categories!!");
+    console.log("type req.params", type);
+    console.log("req.body", req.body);
+    console.log("categories from req.body", categories);
+
+    try {
+      // const listing = await this.model.aggregate({
+      //   $match: { categories: { $in: categories }, type: { $in: [type] } },
+      // });
+      const listing = await this.model.find({
+        categories: { $all: categories },
+        type: type,
+      });
+
+      console.log(listing, "after sorting");
+      return res.json(listing);
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  };
+  //deleteOne({ size: 'large' }
+  deleteOne = async (req, res) => {
+    const { listingId } = req.params;
+    console.log("listingid req.params", listingId);
+    console.log("delete route!");
+
+    try {
+      const user = await this.model.deleteOne({ _id: listingId });
+      return res.json(user);
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  };
 
   insertOne = async (req, res) => {
     console.log("reqbody", req.body);
@@ -13,12 +53,20 @@ class ListingController extends BaseController {
     console.log("inserting!");
 
     try {
-      console.log("trying..lol");
+      const uploadImg = await cloudinary.uploader.upload(image, {
+        folder: `${type}`,
+        //width: put here,
+        //crop:scale / or wtv
+      });
       const listing = await this.model.create({
         userId: userId,
         username: username,
         title: title,
         image: image,
+        cloudimg: {
+          public_id: uploadImg.public_id,
+          url: uploadImg.secure_url,
+        },
         categories: categories,
         description: description,
         type: type,
