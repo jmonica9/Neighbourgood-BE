@@ -8,7 +8,10 @@ class UserRouter {
   routes() {
     router.get("/", this.controller.getAll);
     router.get("/:userId", this.controller.getOne);
+    router.get("/profile/:username", this.controller.getOneUsername);
     router.put("/:userId", this.controller.updateOne);
+    router.post("/:userId/updateFriend", this.controller.updateFriend);
+
     return router;
   }
 }
