@@ -7,7 +7,10 @@ class ChatRouter {
   }
   routes() {
     //get the chatroom's listing
-    router.get("/:listingId", this.controller.getOneListing);
+
+    router.get("/:chatroomId", this.controller.getOneChatroom);
+    router.get("/listing/:listingId", this.controller.getOneListing);
+    router.post("/join", this.controller.joinOneChatroom);
     router.post("/create/:listingId", this.controller.createChatroom);
     return router;
   }
