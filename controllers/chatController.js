@@ -7,6 +7,18 @@ class ChatController extends BaseController {
     this.listingModel = listingModel;
   }
 
+  getAllUserChatrooms = async (req, res) => {
+    const { userId } = req.params;
+    try {
+      const chatrooms = await this.model.find({
+        $or: [{ requestorId: userId }, { ownerId: userId }],
+      });
+      return res.json(chatrooms);
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  };
+
   getOneChatroom = async (req, res) => {
     const { chatroomId } = req.params;
     try {
@@ -19,7 +31,6 @@ class ChatController extends BaseController {
 
   getOneListing = async (req, res) => {
     const { listingId } = req.params;
-    console.log("this ran", listingId);
     try {
       const listing = await this.listingModel.findById(listingId);
       return res.json(listing);
@@ -37,6 +48,20 @@ class ChatController extends BaseController {
         ownerId: ownerId,
       });
       return res.json(chatroom);
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  };
+
+  deleteChatroom = async (req, res) => {
+    const { listingId } = req.params;
+    const { userId } = req.params;
+    try {
+      const chatroom = await this.model.findOneAndDelete({
+        listingId: listingId,
+        $or: [{ requestorId: userId }, { ownerId: userId }],
+      });
+      return res.json(`${chatroom} deleted`);
     } catch (err) {
       return res.status(400).json({ error: true, msg: err });
     }
