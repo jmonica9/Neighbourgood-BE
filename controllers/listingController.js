@@ -8,6 +8,16 @@ class ListingController extends BaseController {
     this.userModel = userModel;
   }
 
+  getOneListing = async (req, res) => {
+    const { listingId } = req.body;
+    try {
+      const listing = await this.model.findById(listingId);
+      return res.json(listing);
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  };
+
   //sort by categories
   sortByCategories = async (req, res) => {
     const { type } = req.params;
