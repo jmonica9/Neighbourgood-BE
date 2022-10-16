@@ -137,7 +137,6 @@ class ListingController extends BaseController {
   };
 
   getMyTypeWatchlist = async (req, res) => {
-    console.log("get my type listings route");
     console.log(req.params, "req params");
     const { type, userId } = req.params;
     let requestedtype = type;
@@ -155,10 +154,8 @@ class ListingController extends BaseController {
 
   getAllFromUser = async (req, res) => {
     const { userId } = req.params;
-    console.log("GET FRIENDSSS ROUTEEEE");
     try {
       const listings = await this.model.find({ userId: userId }).exec();
-      console.log("get all from user!");
       return res.json(listings);
     } catch (err) {
       return res.status(400).json({ error: true, msg: err });
