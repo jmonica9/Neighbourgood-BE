@@ -19,6 +19,8 @@ class ListingRouter {
 
     //add requestorid
     router.post("/request", this.controller.addUserRequest);
+    //withdraw requestorid
+    router.post("/withdraw", this.controller.withdrawUserRequest);
     //all listings for one type where user is inside the requestorIds
     router.get("/:type/:userId/watchlist", this.controller.getMyTypeWatchlist);
 
