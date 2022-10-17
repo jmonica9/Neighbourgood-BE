@@ -25,15 +25,18 @@ const UserRouter = require("./routers/userRouter");
 const ListingRouter = require("./routers/listingRouter");
 const AuthRouter = require("./routers/authRouter");
 const ChatRouter = require("./routers/chatRouter");
+const MessageRouter = require("./routers/messageRouter");
 //import controllers
 const UserController = require("./controllers/userController");
 const ListingController = require("./controllers/listingController");
 const AuthController = require("./controllers/authController");
 const ChatController = require("./controllers/chatController");
+const MessageController = require("./controllers/messageController");
 //import models here
 const userModel = require("./models/userModel");
 const listingModel = require("./models/listingModel");
 const chatModel = require("./models/chatModel");
+const messageModel = require("./models/messageModel");
 const { create } = require("./models/userModel");
 
 // Middleware
@@ -68,11 +71,13 @@ const userController = new UserController(userModel, listingModel);
 const listingController = new ListingController(listingModel, userModel);
 const authController = new AuthController(userModel);
 const chatController = new ChatController(chatModel, listingModel);
+const messageController = new MessageController(messageModel, chatModel);
 //initialise routers here - insert JWT here if need later
 const userRouter = new UserRouter(userController).routes();
 const listingRouter = new ListingRouter(listingController).routes();
 const authRouter = new AuthRouter(authController).routes();
 const chatRouter = new ChatRouter(chatController).routes();
+const messageRouter = new MessageRouter(messageController).routes();
 // app.use(cors("*"));
 
 //initialise routes here
@@ -80,6 +85,7 @@ app.use("/users", userRouter);
 app.use("/listing", listingRouter);
 app.use("/auth", authRouter);
 app.use("/chatroom", chatRouter);
+app.use("/messages", messageRouter);
 
 //----------------------------------------- END OF ROUTES---------------------------------------------------
 
