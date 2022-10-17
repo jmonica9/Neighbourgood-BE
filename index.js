@@ -26,17 +26,20 @@ const ListingRouter = require("./routers/listingRouter");
 const AuthRouter = require("./routers/authRouter");
 const ChatRouter = require("./routers/chatRouter");
 const MessageRouter = require("./routers/messageRouter");
+const AppointmentRouter = require("./routers/appointmentRouter");
 //import controllers
 const UserController = require("./controllers/userController");
 const ListingController = require("./controllers/listingController");
 const AuthController = require("./controllers/authController");
 const ChatController = require("./controllers/chatController");
 const MessageController = require("./controllers/messageController");
+const AppointmentController = require("./controllers/appointmentController");
 //import models here
 const userModel = require("./models/userModel");
 const listingModel = require("./models/listingModel");
 const chatModel = require("./models/chatModel");
 const messageModel = require("./models/messageModel");
+const newAppointmentModel = require("./models/newAppointmentModel");
 const { create } = require("./models/userModel");
 
 // Middleware
@@ -72,12 +75,17 @@ const listingController = new ListingController(listingModel, userModel);
 const authController = new AuthController(userModel);
 const chatController = new ChatController(chatModel, listingModel);
 const messageController = new MessageController(messageModel, chatModel);
+const appointmentController = new AppointmentController(
+  newAppointmentModel,
+  chatModel
+);
 //initialise routers here - insert JWT here if need later
 const userRouter = new UserRouter(userController).routes();
 const listingRouter = new ListingRouter(listingController).routes();
 const authRouter = new AuthRouter(authController).routes();
 const chatRouter = new ChatRouter(chatController).routes();
 const messageRouter = new MessageRouter(messageController).routes();
+const appointmentRouter = new AppointmentRouter(appointmentController).routes();
 // app.use(cors("*"));
 
 //initialise routes here
@@ -86,6 +94,7 @@ app.use("/listing", listingRouter);
 app.use("/auth", authRouter);
 app.use("/chatroom", chatRouter);
 app.use("/messages", messageRouter);
+app.use("/appointment", appointmentRouter);
 
 //----------------------------------------- END OF ROUTES---------------------------------------------------
 
