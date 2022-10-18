@@ -10,7 +10,6 @@ class MessageController extends BaseController {
   insertOneWithoutDate = async (req, res) => {
     const { chatroomId, userId } = req.params;
     const { messageText, senderName } = req.body;
-    console.log("thisranhere", chatroomId, userId, messageText);
     try {
       const message = await this.model.create({
         chatroomId: chatroomId,
@@ -24,28 +23,43 @@ class MessageController extends BaseController {
     }
   };
 
-  // insertOneWithDate = async (req, res) => {
-  //   const { chatroomId, userId } = req.params;
-  //   const { messageText, proposedDate } = req.body;
-  //   console.log("thisranhere", chatroomId, userId, messageText);
-  //   try {
-  //     const message = await this.model.create({
-  //       chatroomId: chatroomId,
-  //       senderId: userId,
-  //       messageText: messageText,
-  //       proposedDate: proposedDate,
-  //     });
-  //     return res.json(message);
-  //   } catch (err) {
-  //     return res.status(400).json({ error: true, msg: err });
-  //   }
-  // };
+  insertOneWithDate = async (req, res) => {
+    const { chatroomId, userId } = req.params;
+    const { messageText, proposedDate, senderName } = req.body;
+    console.log("thisranhere", chatroomId, userId, messageText, proposedDate);
+    try {
+      const message = await this.model.create({
+        chatroomId: chatroomId,
+        senderId: userId,
+        messageText: messageText,
+        proposedDate: proposedDate,
+        senderName: senderName,
+      });
+      return res.json(message);
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  };
 
   getChatRoomMessages = async (req, res) => {
     const { chatroomId } = req.params;
     try {
       const messages = await this.model.find({ chatroomId: chatroomId });
       return res.json(messages);
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  };
+
+  deleteOneWithDate = async (req, res) => {
+    const { chatroomId } = req.body;
+    console.log("this ran deleteonemessagewithdate", chatroomId);
+    try {
+      const user = await this.model.deleteOne({
+        chatroomId: chatroomId,
+        proposedDate: { $exists: true },
+      });
+      return res.json(user);
     } catch (err) {
       return res.status(400).json({ error: true, msg: err });
     }
