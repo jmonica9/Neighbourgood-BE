@@ -51,6 +51,28 @@ class AppointmentController extends BaseController {
       return res.status(400).json({ error: true, msg: err });
     }
   };
+
+  confirmOneAppointment = async (req, res) => {
+    const { requestorId, ownerId, listingId } = req.body;
+    try {
+      const appointment = await this.model.findOneAndUpdate(
+        {
+          requestorId: requestorId,
+          ownerId: ownerId,
+          listingId: listingId,
+        },
+        {
+          confirmed: true,
+        },
+        {
+          new: true,
+        }
+      );
+      return res.json(appointment);
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  };
 }
 
 module.exports = AppointmentController;

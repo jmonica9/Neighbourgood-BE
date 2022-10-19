@@ -27,6 +27,9 @@ class ListingRouter {
     //my own listings according to type
     router.get("/:type/:userId", this.controller.getMyTypeListings);
 
+    //update reservedBy field once an appointment has been confirmed
+    router.put("/reserve", this.controller.reserveListing);
+
     return router;
   }
 }
