@@ -173,13 +173,27 @@ class ListingController extends BaseController {
   };
 
   withdrawUserRequest = async (req, res) => {
-    console.log("withdrawal ran");
     const { listing, userId } = req.body;
     console.log(listing, userId);
     try {
       const response = await this.model.findOneAndUpdate(
         { _id: listing._id },
         { $pull: { requestorIds: userId } },
+        { new: true }
+      );
+      return res.json(response);
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  };
+
+  reserveListing = async (req, res) => {
+    const { listingId, requestorId } = req.body;
+    console.log("rserve listing", listingId, requestorId);
+    try {
+      const response = await this.model.findOneAndUpdate(
+        { _id: listingId },
+        { reservedBy: requestorId },
         { new: true }
       );
       return res.json(response);

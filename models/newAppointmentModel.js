@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
 const AppointmentSchema = new mongoose.Schema(
   {
-    requestorId: { type: String, required: true, unique: true },
-    ownerId: { type: String, required: true, unique: true },
+    chatroomId: { type: String, required: true },
+    requestorId: { type: String, required: true },
+    ownerId: { type: String, required: true },
     listingId: { type: String, required: true },
     proposedDateAndTime: { type: String, required: true },
     confirmed: { type: Boolean },
