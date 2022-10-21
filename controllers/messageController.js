@@ -26,7 +26,6 @@ class MessageController extends BaseController {
   insertOneWithDate = async (req, res) => {
     const { chatroomId, userId } = req.params;
     const { messageText, proposedDate, senderName } = req.body;
-    console.log("thisranhere", chatroomId, userId, messageText, proposedDate);
     try {
       const message = await this.model.create({
         chatroomId: chatroomId,
@@ -53,7 +52,6 @@ class MessageController extends BaseController {
 
   deleteOneWithDate = async (req, res) => {
     const { chatroomId } = req.body;
-    console.log("this ran deleteonemessagewithdate", chatroomId);
     try {
       const user = await this.model.deleteOne({
         chatroomId: chatroomId,

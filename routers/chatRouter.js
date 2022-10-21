@@ -9,6 +9,7 @@ class ChatRouter {
     //get the chatroom's listing
 
     router.get("/:chatroomId", this.controller.getOneChatroom);
+    router.delete("/:chatroomId", this.controller.deleteChatroom);
     router.get("/listing/:listingId", this.controller.getOneListing);
     router.get("/user/:userId", this.controller.getAllUserChatrooms);
     router.post("/join", this.controller.joinOneChatroom);
