@@ -21,7 +21,7 @@ class AuthController extends BaseController {
   }
 
   register = async (req, res, next) => {
-    console.log("register route!", req.body);
+    // console.log("register route!", req.body);
     this.model.findOne({ username: req.body.username }, async (err, doc) => {
       if (err) {
         console.log(err);
@@ -29,11 +29,11 @@ class AuthController extends BaseController {
         return;
       }
       if (doc) {
-        console.log(doc);
+        // console.log(doc);
         return res.send("User Already Exists");
       }
       if (!doc) {
-        console.log("doc dont exist");
+        // console.log("doc dont exist");
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         //youtube way that doesn't work
         // const newUser = new this.model({
@@ -64,20 +64,18 @@ class AuthController extends BaseController {
   };
 
   login = async (req, res, next) => {
-    console.log("login req body", req.body);
-    console.log("login route!");
     passport.authenticate("local", (err, user, info) => {
       if (err) {
-        console.log(err);
+        // console.log(err);
         return res.status(500).json;
       }
       if (!user) {
         return res.send("No User Exists");
       } else if (user) {
-        console.log("authenticated");
+        // console.log("authenticated");
         req.logIn(user, (err) => {
           if (err) {
-            console.log(err);
+            // console.log(err);
             return res.status(500).json;
           }
           // Successfully Authenticated
@@ -85,16 +83,15 @@ class AuthController extends BaseController {
           const token = createToken(req.user._id);
           //send cookie to client browser
           res.cookie("jwt", token, { httpOnly: false, maxAge: maxAge * 1000 });
-          console.log(req.user, "req user");
 
-          console.log(
-            {
-              success: true,
-              token: "JWT " + token,
-              user: req.user,
-            },
-            "response data"
-          );
+          // console.log(
+          //   {
+          //     success: true,
+          //     token: "JWT " + token,
+          //     user: req.user,
+          //   },
+          //   "response data"
+          // );
           return res.send(req.user);
         });
       }
@@ -139,9 +136,9 @@ class AuthController extends BaseController {
         return res.send("No User Exists");
       }
       if (user) {
-        console.log(req);
-        console.log(req.cookies);
-        console.log("jwt route protected");
+        // console.log(req);
+        // console.log(req.cookies);
+        // console.log("jwt route protected");
         res.json(req.user);
       }
     })(req, res, next);

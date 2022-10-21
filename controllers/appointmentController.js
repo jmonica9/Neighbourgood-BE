@@ -9,7 +9,6 @@ class AppointmentController extends BaseController {
 
   getOne = async (req, res) => {
     const { listingId, chatroomId } = req.body;
-    console.log(listingId, chatroomId);
     try {
       const appointment = await this.model.findOne({
         listingId: listingId,

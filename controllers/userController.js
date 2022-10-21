@@ -48,7 +48,6 @@ class UserController extends BaseController {
     const { userId } = req.params;
     const { friendId } = req.body;
     const { action } = req.body;
-    console.log(userId, friendId, action);
     try {
       if (action === "add") {
         const user = await this.model.findOneAndUpdate(
