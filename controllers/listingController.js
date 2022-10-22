@@ -1,5 +1,6 @@
 const BaseController = require("./baseController");
 const cloudinary = require("../config/cloudinaryConfig");
+// const stripe = require("../stripe");
 
 class ListingController extends BaseController {
   constructor(model, userModel) {
@@ -8,8 +9,8 @@ class ListingController extends BaseController {
     this.userModel = userModel;
   }
 
-  getOneListing = async (req, res) => {
-    const { listingId } = req.body;
+  getOne = async (req, res) => {
+    const { listingId } = req.params;
     try {
       const listing = await this.model.findById(listingId);
       return res.json(listing);
@@ -90,17 +91,43 @@ class ListingController extends BaseController {
     }
   };
 
-  // deprecated code
-  //   b64DecodeUnicode = (str)=> {
-  //       // Going backwards: from bytestream, to percent-encoding, to original string.
-  //       return decodeURIComponent(atob(str).split('').map(function(c) {
-  //           return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-  //       }).join(''));
-  //   }
+  updateOne = async (req, res) => {
+    const { listingId } = req.params;
+    const { title, image, categories, description, type } = req.body;
+    try {
+      if (image) {
+        const uploadImg = await cloudinary.uploader.upload(image, {
+          folder: `${type}`,
+        });
+        const listingPicture = await this.model.findOneAndUpdate(
+          { _id: listingId },
+          {
+            image: image,
+            cloudimg: {
+              public_id: uploadImg.public_id,
+              url: uploadImg.secure_url,
+            },
+          }
+        );
+        console.log(listingPicture);
+      }
+      const listing = await this.model.findOneAndUpdate(
+        { _id: listingId },
+        {
+          title: title,
+          categories: categories,
+          description: description,
+          type: type,
+        }
+      );
+
+      return res.json(listing);
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  };
 
   getTypeListings = async (req, res) => {
-    // console.log("get type listings route");
-    // console.log(req.params, "req params");
     const { type } = req.params;
     let requestedtype = type;
     try {
@@ -113,8 +140,6 @@ class ListingController extends BaseController {
     }
   };
   getMyTypeListings = async (req, res) => {
-    // console.log("get my type listings route");
-    // console.log(req.params, "req params");
     const { type, userId } = req.params;
     let requestedtype = type;
     let requestedUserId = userId;
@@ -210,6 +235,54 @@ class ListingController extends BaseController {
       return res.json(response);
     } catch (err) {
       return res.status(400).json({ error: true, msg: err });
+    }
+  };
+
+  addLike = async (req, res) => {
+    const { listingId } = req.params;
+    const { userId } = req.body;
+    const response = await this.model.findOneAndUpdate(
+      { _id: listingId },
+      {
+        $push: { usersLiked: userId },
+      }
+    );
+    // console.log(response);
+    return res.json(response);
+  };
+  removeLike = async (req, res) => {
+    const { listingId } = req.params;
+    const { userId } = req.body;
+    const response = await this.model.findOneAndUpdate(
+      { _id: listingId },
+      {
+        $pull: { usersLiked: userId },
+      }
+    );
+    // console.log(response);
+    return res.json(response);
+  };
+
+  addComment = async (req, res) => {
+    const { listingId } = req.params;
+    const { senderId, senderUsername, senderPic, comment } = req.body;
+    try {
+      const response = await this.model.findOneAndUpdate(
+        { _id: listingId },
+        {
+          $push: {
+            comment: {
+              senderId: senderId,
+              senderUsername: senderUsername,
+              senderPic: senderPic,
+              comment: comment,
+            },
+          },
+        }
+      );
+      return res.json(response);
+    } catch (err) {
+      return res.json(err);
     }
   };
 }

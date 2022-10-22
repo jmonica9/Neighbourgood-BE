@@ -9,7 +9,6 @@ class UserRouter {
     router.get("/", this.controller.getAll);
     router.post("/login", this.controller.login);
     router.post("/register", this.controller.register);
-    // router.get("/myUser",this.controller.myUser);
     router.get("/jwtUser", this.controller.getJwtUser);
     router.get("/logout", this.controller.logout);
     return router;

@@ -27,6 +27,9 @@ const AuthRouter = require("./routers/authRouter");
 const ChatRouter = require("./routers/chatRouter");
 const MessageRouter = require("./routers/messageRouter");
 const AppointmentRouter = require("./routers/appointmentRouter");
+const PaymentRouter = require("./routers/paymentRouter");
+const PostsRouter = require("./routers/postRouter");
+
 //import controllers
 const UserController = require("./controllers/userController");
 const ListingController = require("./controllers/listingController");
@@ -34,13 +37,18 @@ const AuthController = require("./controllers/authController");
 const ChatController = require("./controllers/chatController");
 const MessageController = require("./controllers/messageController");
 const AppointmentController = require("./controllers/appointmentController");
+const PaymentController = require("./controllers/paymentController");
+
 //import models here
 const userModel = require("./models/userModel");
 const listingModel = require("./models/listingModel");
 const chatModel = require("./models/chatModel");
 const messageModel = require("./models/messageModel");
 const newAppointmentModel = require("./models/newAppointmentModel");
-const { create } = require("./models/userModel");
+const paymentModel = require("./models/paymentModel");
+const postModel = require("./models/postModel");
+const PostController = require("./controllers/postController");
+const PostRouter = require("./routers/postRouter");
 
 // Middleware
 // app.use(express.json());
@@ -79,6 +87,9 @@ const appointmentController = new AppointmentController(
   newAppointmentModel,
   chatModel
 );
+const paymentController = new PaymentController(paymentModel, listingModel);
+const postController = new PostController(postModel);
+
 //initialise routers here - insert JWT here if need later
 const userRouter = new UserRouter(userController).routes();
 const listingRouter = new ListingRouter(listingController).routes();
@@ -86,6 +97,9 @@ const authRouter = new AuthRouter(authController).routes();
 const chatRouter = new ChatRouter(chatController).routes();
 const messageRouter = new MessageRouter(messageController).routes();
 const appointmentRouter = new AppointmentRouter(appointmentController).routes();
+const paymentRouter = new PaymentRouter(paymentController).routes();
+const postRouter = new PostRouter(postController).routes();
+
 // app.use(cors("*"));
 
 //initialise routes here
@@ -95,6 +109,8 @@ app.use("/auth", authRouter);
 app.use("/chatroom", chatRouter);
 app.use("/messages", messageRouter);
 app.use("/appointment", appointmentRouter);
+app.use("/payment", paymentRouter);
+app.use("/post", postRouter);
 
 //----------------------------------------- END OF ROUTES---------------------------------------------------
 
@@ -106,7 +122,7 @@ const socketIO = new Server(httpServer, {
 
 require("./sockets")(socketIO);
 
-//----------------------------------------- END OF ROUTES---------------------------------------------------
+//----------------------------------------- END OF SOCKET---------------------------------------------------
 
 httpServer.listen(PORT, () => {
   console.log(`Express app listening on port ${PORT}!`);
