@@ -1,4 +1,7 @@
 const BaseController = require("./baseController");
+const cloudinary = require("../config/cloudinaryConfig");
+const { json } = require("body-parser");
+
 class UserController extends BaseController {
   constructor(model) {
     super(model);
@@ -40,6 +43,32 @@ class UserController extends BaseController {
       );
       return res.json(user);
     } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  };
+
+  updateProfilePicture = async (req, res) => {
+    const { file } = req.body;
+    const { userId } = req.params;
+    // console.log("file:", file);
+    try {
+      const uploadImg = await cloudinary.uploader.upload(file, {
+        folder: "profilepicture",
+      });
+      const user = await this.model.findOneAndUpdate(
+        {
+          _id: userId,
+        },
+        {
+          cloudimg: {
+            public_id: uploadImg.public_id,
+            url: uploadImg.secure_url,
+          },
+        }
+      );
+      return res.json(user);
+    } catch (err) {
+      console.log(err);
       return res.status(400).json({ error: true, msg: err });
     }
   };

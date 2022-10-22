@@ -15,5 +15,10 @@ module.exports = (socketIO) => {
       console.log("userinfo recieved");
       socket.emit("updating user info");
     });
+
+    socket.on("listing updated", () => {
+      console.log("listinginfo recieved");
+      socket.emit("updating listing info");
+    });
   });
 };

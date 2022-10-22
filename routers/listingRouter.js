@@ -8,14 +8,24 @@ class ListingRouter {
   routes() {
     router.get("/", this.controller.getAll);
     router.post("/", this.controller.insertOne);
+    router.get("/single/:listingId", this.controller.getOne);
     // all listings for one type
     router.get("/:type", this.controller.getTypeListings);
     // sort listings by categories for one type
     router.post("/categories/:type", this.controller.sortByCategories);
     //delete listing
     router.post("/delete/:listingId", this.controller.deleteOne);
+    //edit listing
+    router.post("/edit/:listingId", this.controller.updateOne);
     //all listings for user
     router.get("/user/:userId", this.controller.getAllFromUser);
+
+    //like and un-like listing
+    router.post("/like/:listingId/add", this.controller.addLike);
+    router.post("/like/:listingId/remove", this.controller.removeLike);
+
+    //add listing comment
+    router.post("/comment/:listingId", this.controller.addComment);
 
     //add requestorid
     router.post("/request", this.controller.addUserRequest);
@@ -26,6 +36,10 @@ class ListingRouter {
 
     //my own listings according to type
     router.get("/:type/:userId", this.controller.getMyTypeListings);
+
+    //deposit payment for lending listings
+    // router.get("/single/:listingId/payment", this.controller.getPaymentInfo);
+    // router.post("/single/:listingId/payment", this.controller.addPayment);
 
     return router;
   }
