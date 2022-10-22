@@ -50,20 +50,18 @@ class AuthController extends BaseController {
   };
 
   login = async (req, res, next) => {
-    // console.log("login req body", req.body);
-    // console.log("login route!");
     passport.authenticate("local", (err, user, info) => {
       if (err) {
-        console.log(err);
+        // console.log(err);
         return res.status(500).json;
       }
       if (!user) {
         return res.send("No User Exists");
       } else if (user) {
-        console.log("authenticated");
+        // console.log("authenticated");
         req.logIn(user, (err) => {
           if (err) {
-            console.log(err);
+            // console.log(err);
             return res.status(500).json;
           }
           // Successfully Authenticated
@@ -71,7 +69,6 @@ class AuthController extends BaseController {
           const token = createToken(req.user._id);
           //send cookie to client browser
           res.cookie("jwt", token, { httpOnly: false, maxAge: maxAge * 1000 });
-          // console.log(req.user, "req user");
 
           // console.log(
           //   {

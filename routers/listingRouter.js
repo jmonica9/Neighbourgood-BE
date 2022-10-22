@@ -37,6 +37,9 @@ class ListingRouter {
     //my own listings according to type
     router.get("/:type/:userId", this.controller.getMyTypeListings);
 
+    //update reservedBy field once an appointment has been confirmed
+    router.put("/reserve", this.controller.reserveListing);
+
     //deposit payment for lending listings
     // router.get("/single/:listingId/payment", this.controller.getPaymentInfo);
     // router.post("/single/:listingId/payment", this.controller.addPayment);

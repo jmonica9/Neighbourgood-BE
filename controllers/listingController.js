@@ -171,6 +171,18 @@ class ListingController extends BaseController {
     }
   };
 
+  sortByCategoriesAndLocation = async (req, res) => {
+    try {
+      const listings = await this.model.find({
+        location: location,
+        categories: location,
+      });
+      return res.json(listings);
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  };
+
   getAllFromUser = async (req, res) => {
     const { userId } = req.params;
     try {
@@ -198,13 +210,26 @@ class ListingController extends BaseController {
   };
 
   withdrawUserRequest = async (req, res) => {
-    console.log("withdrawal ran");
     const { listing, userId } = req.body;
-    console.log(listing, userId);
     try {
       const response = await this.model.findOneAndUpdate(
         { _id: listing._id },
         { $pull: { requestorIds: userId } },
+        { new: true }
+      );
+      return res.json(response);
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  };
+
+  reserveListing = async (req, res) => {
+    const { listingId, requestorId } = req.body;
+
+    try {
+      const response = await this.model.findOneAndUpdate(
+        { _id: listingId },
+        { reservedBy: requestorId },
         { new: true }
       );
       return res.json(response);
