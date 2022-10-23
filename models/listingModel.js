@@ -23,8 +23,9 @@ const ListingSchema = new mongoose.Schema(
     depositAmount: { type: Number },
     chats: { type: Array },
     completed: { type: Boolean },
-    like: { type: Number },
-    comment: { type: Array },
+    like: { type: Number, default: 0 },
+    usersLiked: { type: Array },
+    comment: { type: Array, ref: "User" },
     description: { type: String },
   },
   { timestamps: true }
