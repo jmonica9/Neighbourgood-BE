@@ -22,7 +22,7 @@ const ListingSchema = new mongoose.Schema(
     location: { type: String },
     depositAmount: { type: Number },
     chats: { type: Array },
-    completed: { type: Boolean },
+    completed: { type: Boolean, default: false },
     like: { type: Number, default: 0 },
     usersLiked: { type: Array },
     comment: { type: Array, ref: "User" },
