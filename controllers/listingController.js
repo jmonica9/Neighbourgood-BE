@@ -276,11 +276,32 @@ class ListingController extends BaseController {
               senderUsername: senderUsername,
               senderPic: senderPic,
               comment: comment,
+              createdAt: new Date(),
             },
           },
         }
       );
       return res.json(response);
+    } catch (err) {
+      return res.json(err);
+    }
+  };
+
+  getComments = async (req, res) => {
+    const { listingId } = req.params;
+    try {
+      const comments = await this.model.findById(listingId);
+      // .populate({ path: "senderId", model: "User" })
+      let sendersData = [];
+      comments.comment.forEach(async (comment) => {
+        let userInfo = await this.userModel.findById(comment.senderId);
+        sendersData.push({ userInfo, comment });
+        // console.log(sendersData.length);
+        if (sendersData.length == comments.comment.length)
+          return res.json(sendersData);
+      });
+
+      // return res.json(sendersData);
     } catch (err) {
       return res.json(err);
     }

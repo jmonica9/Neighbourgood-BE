@@ -25,7 +25,7 @@ const ListingSchema = new mongoose.Schema(
     completed: { type: Boolean },
     like: { type: Number, default: 0 },
     usersLiked: { type: Array },
-    comment: { type: Array },
+    comment: { type: Array, ref: "User" },
     description: { type: String },
   },
   { timestamps: true }
