@@ -25,6 +25,7 @@ class ListingRouter {
     router.post("/like/:listingId/remove", this.controller.removeLike);
 
     //add listing comment
+    router.get("/comment/:listingId", this.controller.getComments);
     router.post("/comment/:listingId", this.controller.addComment);
 
     //add requestorid
