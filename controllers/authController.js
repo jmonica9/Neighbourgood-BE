@@ -16,12 +16,17 @@ const createToken = (id) => {
 };
 
 class AuthController extends BaseController {
-  constructor(model) {
+  constructor(model, locationModel) {
     super(model);
+    this.locationModel = locationModel;
   }
 
   register = async (req, res, next) => {
     console.log("register route!", req.body);
+    // const location = await this.locationModel.create({
+    //   location: req.body.location,
+    // });
+    // console.log("location created?:", location);
     this.model.findOne({ username: req.body.username }, async (err, doc) => {
       if (err) {
         console.log(err);
@@ -44,7 +49,11 @@ class AuthController extends BaseController {
 
         //mongoose docs official
         const user = await this.model.findOneAndUpdate(
-          { username: req.body.username, email: req.body.email },
+          {
+            username: req.body.username,
+            email: req.body.email,
+            location: req.body.location,
+          },
           { $setOnInsert: { password: hashedPassword } },
           { upsert: true, new: true }
         );
