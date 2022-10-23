@@ -16,22 +16,18 @@ module.exports = (socketIO) => {
       socket.emit("updating user info");
     });
 
-    /* chatroom sockets stuff */
+    /* SPECIFIC chatroom sockets stuff */
     // join a room
     socket.on("join_room", (data) => {
       socket.join(data.room);
       console.log(socket.rooms);
     });
 
-    socket.on("chatroom_updated", (data) => {
+    socket.on("refresh_chatroom_trigger", (data) => {
       console.log("frontend sent");
       console.log(data.room);
       socketIO.in(data.room).emit("refresh_chatroom", data);
     });
-
-    socket.on("listing updated", () => {
-      console.log("listinginfo recieved");
-      socket.emit("updating listing info");
-    });
+    /* SPECIFIC chatroom sockets stuff */
   });
 };
