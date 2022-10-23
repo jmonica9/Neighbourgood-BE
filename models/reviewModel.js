@@ -1,10 +1,12 @@
 const mongoose = require("mongoose");
 const ReviewSchema = new mongoose.Schema(
   {
-    requestorId: { type: String, required: true },
-    ownerId: { type: String, required: true },
+    listingId: { type: String },
+    requestorId: { type: String },
+    ownerId: { type: String },
     reviewText: { type: String },
     type: { type: String },
+    postedBy: { type: String },
   },
   { timestamps: true }
 );

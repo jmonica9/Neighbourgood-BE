@@ -12,8 +12,29 @@ class ListingController extends BaseController {
   getOne = async (req, res) => {
     const { listingId } = req.params;
     try {
-      const listing = await this.model.findById(listingId);
-      return res.json(listing);
+      const response = await this.model.findOneAndUpdate(
+        { _id: listing._id },
+        { $pull: { completed: true } },
+        { new: true }
+      );
+      console.log("mark complete ran, response: ", response);
+      return res.json(response);
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  };
+  markComplete = async (req, res) => {
+    console.log("withdrawal ran");
+    const { listing, userId } = req.body;
+    console.log(listing, userId);
+    try {
+      const response = await this.model.findOneAndUpdate(
+        { _id: listing._id },
+        { $pull: { completed: true } },
+        { new: true }
+      );
+      console.log("mark complete ran, response: ", response);
+      return res.json(response);
     } catch (err) {
       return res.status(400).json({ error: true, msg: err });
     }
@@ -21,6 +42,7 @@ class ListingController extends BaseController {
 
   //sort by categories
   sortByCategories = async (req, res) => {
+    console.log(req.body, "req body sortbyCategories ");
     const { type } = req.params;
     const { categories } = req.body;
     // console.log("sort by categories!!");
@@ -43,6 +65,63 @@ class ListingController extends BaseController {
       return res.status(400).json({ error: true, msg: err });
     }
   };
+
+  //sort by location
+  sortByLocation = async (req, res) => {
+    console.log(req.body, "req body sortbyLocation ");
+
+    const { type } = req.params;
+    const { location } = req.body;
+    console.log(type, "reqparams sortbylocation");
+    try {
+      const listing = await this.model.find({
+        location: location,
+        type: type,
+      });
+
+      console.log(listing, "after sorting");
+      return res.json(listing);
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  };
+  //sort by location and categories
+  sortByCategoriesAndLocation = async (req, res) => {
+    console.log(req.body, "req body sortbyCategoriesAndLocation ");
+    const { type } = req.params;
+    const { location, categories } = req.body;
+    try {
+      // const listing = await this.model.find({
+      //   $and: [
+      //     { location: { $all: locations, $exists: true } },
+      //     { categories: { $all: categories, $exists: true } },
+      //     { type: type },
+      //   ],
+      // });
+
+      const listing = await this.model.find({
+        $and: [
+          { location: location },
+          { categories: { $all: categories, $exists: true } },
+          { type: type },
+        ],
+      });
+
+      // const listing = await this.model.find({
+      //   $and: [
+      //     { location: { $where: locations } },
+      //     { location: { $exists: true } },
+      //     { categories: { $all: categories, $exists: true } },
+      //     { type: type },
+      //   ],
+      // });
+
+      console.log(listing, "after sorting lOC N CAT");
+      return res.json(listing);
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  };
   //deleteOne({ size: 'large' }
   deleteOne = async (req, res) => {
     const { listingId } = req.params;
@@ -58,9 +137,17 @@ class ListingController extends BaseController {
   };
 
   insertOne = async (req, res) => {
-    // console.log("reqbody", req.body);
-    const { userId, title, image, categories, description, type, username } =
-      req.body;
+    console.log("reqbody", req.body);
+    const {
+      userId,
+      title,
+      image,
+      categories,
+      description,
+      type,
+      username,
+      location,
+    } = req.body;
     // console.log("inserting!");
 
     try {
@@ -83,6 +170,8 @@ class ListingController extends BaseController {
         categories: categories,
         description: description,
         type: type,
+        location: location,
+        completed: false,
       });
 
       return res.json(listing);
@@ -222,6 +311,18 @@ class ListingController extends BaseController {
       return res.status(400).json({ error: true, msg: err });
     }
   };
+
+  // getOneListing = async (req, res) => {
+  //   const { listingId } = req.params;
+  //   try {
+  //     console.log("tis ran", listingId);
+  //     const listing = await this.model.findById(listingId);
+
+  //     return res.json(listing);
+  //   } catch (err) {
+  //     return res.status(400).json({ error: true, msg: err });
+  //   }
+  // };
 
   reserveListing = async (req, res) => {
     const { listingId, requestorId } = req.body;

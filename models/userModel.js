@@ -20,6 +20,7 @@ const UserSchema = new mongoose.Schema(
     reviews: { type: Array },
     appointments: { type: Array },
     address: { type: String },
+    location: { type: String },
   },
   { timestamps: true }
 );

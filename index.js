@@ -30,6 +30,8 @@ const AppointmentRouter = require("./routers/appointmentRouter");
 const PaymentRouter = require("./routers/paymentRouter");
 const PostsRouter = require("./routers/postRouter");
 
+const LocationRouter = require("./routers/locationRouter");
+const ReviewRouter = require("./routers/reviewRouter");
 //import controllers
 const UserController = require("./controllers/userController");
 const ListingController = require("./controllers/listingController");
@@ -39,10 +41,14 @@ const MessageController = require("./controllers/messageController");
 const AppointmentController = require("./controllers/appointmentController");
 const PaymentController = require("./controllers/paymentController");
 
+const LocationController = require("./controllers/locationController");
+const ReviewController = require("./controllers/reviewController");
 //import models here
 const userModel = require("./models/userModel");
 const listingModel = require("./models/listingModel");
 const chatModel = require("./models/chatModel");
+const locationModel = require("./models/locationModel");
+const reviewModel = require("./models/reviewModel");
 const messageModel = require("./models/messageModel");
 const newAppointmentModel = require("./models/newAppointmentModel");
 const paymentModel = require("./models/paymentModel");
@@ -80,7 +86,7 @@ require("./config/passportConfig")(passport);
 //initialise controllers here
 const userController = new UserController(userModel, listingModel);
 const listingController = new ListingController(listingModel, userModel);
-const authController = new AuthController(userModel);
+const authController = new AuthController(userModel, locationModel);
 const chatController = new ChatController(chatModel, listingModel);
 const messageController = new MessageController(messageModel, chatModel);
 const appointmentController = new AppointmentController(
@@ -90,6 +96,12 @@ const appointmentController = new AppointmentController(
 const paymentController = new PaymentController(paymentModel, listingModel);
 const postController = new PostController(postModel);
 
+const locationController = new LocationController(locationModel);
+const reviewController = new ReviewController(
+  reviewModel,
+  listingModel,
+  userModel
+);
 //initialise routers here - insert JWT here if need later
 const userRouter = new UserRouter(userController).routes();
 const listingRouter = new ListingRouter(listingController).routes();
@@ -99,6 +111,9 @@ const messageRouter = new MessageRouter(messageController).routes();
 const appointmentRouter = new AppointmentRouter(appointmentController).routes();
 const paymentRouter = new PaymentRouter(paymentController).routes();
 const postRouter = new PostRouter(postController).routes();
+
+const locationRouter = new LocationRouter(locationController).routes();
+const reviewRouter = new ReviewRouter(reviewController).routes();
 
 // app.use(cors("*"));
 
@@ -111,6 +126,8 @@ app.use("/messages", messageRouter);
 app.use("/appointment", appointmentRouter);
 app.use("/payment", paymentRouter);
 app.use("/post", postRouter);
+app.use("/location", locationRouter);
+app.use("/review", reviewRouter);
 
 //----------------------------------------- END OF ROUTES---------------------------------------------------
 
