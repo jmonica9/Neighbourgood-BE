@@ -1,5 +1,6 @@
 const BaseController = require("./baseController");
 const cloudinary = require("../config/cloudinaryConfig");
+// const stripe = require("../stripe");
 
 class ListingController extends BaseController {
   constructor(model, userModel) {
@@ -8,6 +9,20 @@ class ListingController extends BaseController {
     this.userModel = userModel;
   }
 
+  getOne = async (req, res) => {
+    const { listingId } = req.params;
+    try {
+      const response = await this.model.findOneAndUpdate(
+        { _id: listing._id },
+        { $pull: { completed: true } },
+        { new: true }
+      );
+      console.log("mark complete ran, response: ", response);
+      return res.json(response);
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  };
   markComplete = async (req, res) => {
     console.log("withdrawal ran");
     const { listing, userId } = req.body;
@@ -165,17 +180,43 @@ class ListingController extends BaseController {
     }
   };
 
-  // deprecated code
-  //   b64DecodeUnicode = (str)=> {
-  //       // Going backwards: from bytestream, to percent-encoding, to original string.
-  //       return decodeURIComponent(atob(str).split('').map(function(c) {
-  //           return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-  //       }).join(''));
-  //   }
+  updateOne = async (req, res) => {
+    const { listingId } = req.params;
+    const { title, image, categories, description, type } = req.body;
+    try {
+      if (image) {
+        const uploadImg = await cloudinary.uploader.upload(image, {
+          folder: `${type}`,
+        });
+        const listingPicture = await this.model.findOneAndUpdate(
+          { _id: listingId },
+          {
+            image: image,
+            cloudimg: {
+              public_id: uploadImg.public_id,
+              url: uploadImg.secure_url,
+            },
+          }
+        );
+        console.log(listingPicture);
+      }
+      const listing = await this.model.findOneAndUpdate(
+        { _id: listingId },
+        {
+          title: title,
+          categories: categories,
+          description: description,
+          type: type,
+        }
+      );
+
+      return res.json(listing);
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  };
 
   getTypeListings = async (req, res) => {
-    // console.log("get type listings route");
-    // console.log(req.params, "req params");
     const { type } = req.params;
     let requestedtype = type;
     try {
@@ -188,8 +229,6 @@ class ListingController extends BaseController {
     }
   };
   getMyTypeListings = async (req, res) => {
-    // console.log("get my type listings route");
-    // console.log(req.params, "req params");
     const { type, userId } = req.params;
     let requestedtype = type;
     let requestedUserId = userId;
@@ -214,6 +253,18 @@ class ListingController extends BaseController {
       const listings = await this.model.find({
         type: requestedtype,
         requestorIds: requestedUserId,
+      });
+      return res.json(listings);
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  };
+
+  sortByCategoriesAndLocation = async (req, res) => {
+    try {
+      const listings = await this.model.find({
+        location: location,
+        categories: location,
       });
       return res.json(listings);
     } catch (err) {
@@ -248,9 +299,7 @@ class ListingController extends BaseController {
   };
 
   withdrawUserRequest = async (req, res) => {
-    console.log("withdrawal ran");
     const { listing, userId } = req.body;
-    console.log(listing, userId);
     try {
       const response = await this.model.findOneAndUpdate(
         { _id: listing._id },
@@ -274,6 +323,90 @@ class ListingController extends BaseController {
   //     return res.status(400).json({ error: true, msg: err });
   //   }
   // };
+
+  reserveListing = async (req, res) => {
+    const { listingId, requestorId } = req.body;
+
+    try {
+      const response = await this.model.findOneAndUpdate(
+        { _id: listingId },
+        { reservedBy: requestorId },
+        { new: true }
+      );
+      return res.json(response);
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  };
+
+  addLike = async (req, res) => {
+    const { listingId } = req.params;
+    const { userId } = req.body;
+    const response = await this.model.findOneAndUpdate(
+      { _id: listingId },
+      {
+        $push: { usersLiked: userId },
+      }
+    );
+    // console.log(response);
+    return res.json(response);
+  };
+  removeLike = async (req, res) => {
+    const { listingId } = req.params;
+    const { userId } = req.body;
+    const response = await this.model.findOneAndUpdate(
+      { _id: listingId },
+      {
+        $pull: { usersLiked: userId },
+      }
+    );
+    // console.log(response);
+    return res.json(response);
+  };
+
+  addComment = async (req, res) => {
+    const { listingId } = req.params;
+    const { senderId, senderUsername, senderPic, comment } = req.body;
+    try {
+      const response = await this.model.findOneAndUpdate(
+        { _id: listingId },
+        {
+          $push: {
+            comment: {
+              senderId: senderId,
+              senderUsername: senderUsername,
+              senderPic: senderPic,
+              comment: comment,
+              createdAt: new Date(),
+            },
+          },
+        }
+      );
+      return res.json(response);
+    } catch (err) {
+      return res.json(err);
+    }
+  };
+
+  getComments = async (req, res) => {
+    const { listingId } = req.params;
+    try {
+      const comments = await this.model.findById(listingId);
+      // .populate({ path: "senderId", model: "User" })
+      let sendersData = [];
+      comments.comment.forEach(async (comment) => {
+        let userInfo = await this.userModel.findById(comment.senderId);
+        sendersData.push({ userInfo, comment });
+        // console.log(sendersData.length);
+        if (sendersData.length == comments.comment.length)
+          return res.json(sendersData);
+      });
+
+      // return res.json(sendersData);
+    } catch (err) {
+      return res.json(err);
+    }
+  };
 }
 
 module.exports = ListingController;

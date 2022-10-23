@@ -5,10 +5,8 @@ const AppointmentSchema = new mongoose.Schema(
     requestorId: { type: String, required: true },
     ownerId: { type: String, required: true },
     listingId: { type: String, required: true },
-    startDate: { type: Date },
-    endDate: { type: Date },
+    proposedDateAndTime: { type: String, required: true },
     confirmed: { type: Boolean },
-    details: { type: String },
   },
   { timestamps: true }
 );

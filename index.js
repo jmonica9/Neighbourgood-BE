@@ -25,6 +25,11 @@ const UserRouter = require("./routers/userRouter");
 const ListingRouter = require("./routers/listingRouter");
 const AuthRouter = require("./routers/authRouter");
 const ChatRouter = require("./routers/chatRouter");
+const MessageRouter = require("./routers/messageRouter");
+const AppointmentRouter = require("./routers/appointmentRouter");
+const PaymentRouter = require("./routers/paymentRouter");
+const PostsRouter = require("./routers/postRouter");
+
 const LocationRouter = require("./routers/locationRouter");
 const ReviewRouter = require("./routers/reviewRouter");
 //import controllers
@@ -32,6 +37,10 @@ const UserController = require("./controllers/userController");
 const ListingController = require("./controllers/listingController");
 const AuthController = require("./controllers/authController");
 const ChatController = require("./controllers/chatController");
+const MessageController = require("./controllers/messageController");
+const AppointmentController = require("./controllers/appointmentController");
+const PaymentController = require("./controllers/paymentController");
+
 const LocationController = require("./controllers/locationController");
 const ReviewController = require("./controllers/reviewController");
 //import models here
@@ -40,7 +49,12 @@ const listingModel = require("./models/listingModel");
 const chatModel = require("./models/chatModel");
 const locationModel = require("./models/locationModel");
 const reviewModel = require("./models/reviewModel");
-const { create } = require("./models/userModel");
+const messageModel = require("./models/messageModel");
+const newAppointmentModel = require("./models/newAppointmentModel");
+const paymentModel = require("./models/paymentModel");
+const postModel = require("./models/postModel");
+const PostController = require("./controllers/postController");
+const PostRouter = require("./routers/postRouter");
 
 // Middleware
 // app.use(express.json());
@@ -74,6 +88,14 @@ const userController = new UserController(userModel, listingModel);
 const listingController = new ListingController(listingModel, userModel);
 const authController = new AuthController(userModel, locationModel);
 const chatController = new ChatController(chatModel, listingModel);
+const messageController = new MessageController(messageModel, chatModel);
+const appointmentController = new AppointmentController(
+  newAppointmentModel,
+  chatModel
+);
+const paymentController = new PaymentController(paymentModel, listingModel);
+const postController = new PostController(postModel);
+
 const locationController = new LocationController(locationModel);
 const reviewController = new ReviewController(
   reviewModel,
@@ -85,6 +107,11 @@ const userRouter = new UserRouter(userController).routes();
 const listingRouter = new ListingRouter(listingController).routes();
 const authRouter = new AuthRouter(authController).routes();
 const chatRouter = new ChatRouter(chatController).routes();
+const messageRouter = new MessageRouter(messageController).routes();
+const appointmentRouter = new AppointmentRouter(appointmentController).routes();
+const paymentRouter = new PaymentRouter(paymentController).routes();
+const postRouter = new PostRouter(postController).routes();
+
 const locationRouter = new LocationRouter(locationController).routes();
 const reviewRouter = new ReviewRouter(reviewController).routes();
 
@@ -95,6 +122,10 @@ app.use("/users", userRouter);
 app.use("/listing", listingRouter);
 app.use("/auth", authRouter);
 app.use("/chatroom", chatRouter);
+app.use("/messages", messageRouter);
+app.use("/appointment", appointmentRouter);
+app.use("/payment", paymentRouter);
+app.use("/post", postRouter);
 app.use("/location", locationRouter);
 app.use("/review", reviewRouter);
 
@@ -108,7 +139,7 @@ const socketIO = new Server(httpServer, {
 
 require("./sockets")(socketIO);
 
-//----------------------------------------- END OF ROUTES---------------------------------------------------
+//----------------------------------------- END OF SOCKET---------------------------------------------------
 
 httpServer.listen(PORT, () => {
   console.log(`Express app listening on port ${PORT}!`);
