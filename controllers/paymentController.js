@@ -42,7 +42,7 @@ class PaymentController extends BaseController {
   addPayment = async (req, res) => {
     const postStripeCharge = (res) => (stripeErr, stripeRes) => {
       if (stripeErr) {
-        // console.log(stripeErr);
+        console.log(stripeErr);
         return res.status(500).send({ err: stripeErr });
       } else {
         // console.log(stripeRes);
@@ -58,14 +58,15 @@ class PaymentController extends BaseController {
   addRefund = async (req, res) => {
     const postStripeCharge = (res) => (stripeErr, stripeRes) => {
       if (stripeErr) {
-        // console.log(stripeErr);
+        console.log(stripeErr);
         return res.status(500).send({ err: stripeErr });
       } else {
         // console.log(stripeRes);
-        res.status(200).send({ success: stripeRes });
+        return res.status(200).send({ success: stripeRes });
       }
     };
     const { charge, amount } = req.body;
+    console.log(req.body);
     const refund = await stripe.refunds.create(req.body, postStripeCharge(res));
     //charge: chargeID,
     //amount: amount,
@@ -120,7 +121,7 @@ class PaymentController extends BaseController {
   };
 
   claimDeposit = async (req, res) => {
-    const { accountId } = req.body;
+    const { accountId, amount } = req.body;
     const postStripeCharge = (res) => (stripeErr, stripeRes) => {
       if (stripeErr) {
         console.log(stripeErr);
@@ -140,7 +141,7 @@ class PaymentController extends BaseController {
 
     const payout = await stripe.transfers.create(
       {
-        amount: 100,
+        amount: amount,
         currency: "sgd",
         destination: accountId,
       },
@@ -182,10 +183,12 @@ class PaymentController extends BaseController {
 
   updateOne = async (req, res) => {
     const { listingId } = req.params;
+    const { status } = req.params;
     const payment = await this.model.findOneAndUpdate(
       { listingId: listingId },
-      { status: "Deposit Returned" }
+      { status: status }
     );
+    return res.json(payment);
   };
 
   // getOne = async (req, res) => {

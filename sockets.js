@@ -12,7 +12,7 @@ module.exports = (socketIO) => {
     });
 
     socket.on("user updated", () => {
-      console.log("userinfo recieved");
+      // console.log("userinfo recieved");
       socket.emit("updating user info");
     });
 
@@ -24,8 +24,8 @@ module.exports = (socketIO) => {
     });
 
     socket.on("refresh_chatroom_trigger", (data) => {
-      console.log("frontend sent");
-      console.log(data.room);
+      // console.log("frontend sent");
+      // console.log(data.room);
       socketIO.in(data.room).emit("refresh_chatroom", data);
     });
     /* SPECIFIC chatroom sockets stuff */
