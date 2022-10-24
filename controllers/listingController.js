@@ -18,6 +18,7 @@ class ListingController extends BaseController {
       return res.status(400).json({ error: true, msg: err });
     }
   };
+
   markComplete = async (req, res) => {
     console.log("withdrawal ran");
     const { listing, userId } = req.body;
@@ -255,17 +256,17 @@ class ListingController extends BaseController {
     }
   };
 
-  sortByCategoriesAndLocation = async (req, res) => {
-    try {
-      const listings = await this.model.find({
-        location: location,
-        categories: location,
-      });
-      return res.json(listings);
-    } catch (err) {
-      return res.status(400).json({ error: true, msg: err });
-    }
-  };
+  // sortByCategoriesAndLocation = async (req, res) => {
+  //   try {
+  //     const listings = await this.model.find({
+  //       location: location,
+  //       categories: location,
+  //     });
+  //     return res.json(listings);
+  //   } catch (err) {
+  //     return res.status(400).json({ error: true, msg: err });
+  //   }
+  // };
 
   getAllFromUser = async (req, res) => {
     const { userId } = req.params;
