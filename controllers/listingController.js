@@ -321,12 +321,12 @@ class ListingController extends BaseController {
   // };
 
   reserveListing = async (req, res) => {
-    const { listingId, requestorId } = req.body;
+    const { listingId, requestorId, dateOfTransaction } = req.body;
 
     try {
       const response = await this.model.findOneAndUpdate(
         { _id: listingId },
-        { reservedBy: requestorId },
+        { reservedBy: requestorId, dateOfTransaction: dateOfTransaction },
         { new: true }
       );
       return res.json(response);
