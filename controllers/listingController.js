@@ -143,6 +143,7 @@ class ListingController extends BaseController {
       type,
       username,
       location,
+      depositAmount,
     } = req.body;
     // console.log("inserting!");
 
@@ -161,6 +162,7 @@ class ListingController extends BaseController {
         },
         categories: categories,
         description: description,
+        depositAmount: depositAmount,
         type: type,
         location: location,
         completed: false,
