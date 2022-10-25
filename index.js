@@ -32,6 +32,8 @@ const PostsRouter = require("./routers/postRouter");
 
 const LocationRouter = require("./routers/locationRouter");
 const ReviewRouter = require("./routers/reviewRouter");
+const CommunityMessageRouter = require("./routers/communityMessageRouter");
+
 //import controllers
 const UserController = require("./controllers/userController");
 const ListingController = require("./controllers/listingController");
@@ -43,6 +45,7 @@ const PaymentController = require("./controllers/paymentController");
 
 const LocationController = require("./controllers/locationController");
 const ReviewController = require("./controllers/reviewController");
+const CommunityMessageController = require("./controllers/communityMessageController");
 //import models here
 const userModel = require("./models/userModel");
 const listingModel = require("./models/listingModel");
@@ -53,6 +56,7 @@ const messageModel = require("./models/messageModel");
 const newAppointmentModel = require("./models/newAppointmentModel");
 const paymentModel = require("./models/paymentModel");
 const postModel = require("./models/postModel");
+const communityMessageModel = require("./models/communityMessageModel");
 const PostController = require("./controllers/postController");
 const PostRouter = require("./routers/postRouter");
 
@@ -102,6 +106,10 @@ const reviewController = new ReviewController(
   listingModel,
   userModel
 );
+const communityMessageController = new CommunityMessageController(
+  communityMessageModel
+);
+
 //initialise routers here - insert JWT here if need later
 const userRouter = new UserRouter(userController).routes();
 const listingRouter = new ListingRouter(listingController).routes();
@@ -114,6 +122,9 @@ const postRouter = new PostRouter(postController).routes();
 
 const locationRouter = new LocationRouter(locationController).routes();
 const reviewRouter = new ReviewRouter(reviewController).routes();
+const communityMessageRouter = new CommunityMessageRouter(
+  communityMessageController
+).routes();
 
 // app.use(cors("*"));
 
@@ -128,7 +139,7 @@ app.use("/payment", paymentRouter);
 app.use("/post", postRouter);
 app.use("/location", locationRouter);
 app.use("/review", reviewRouter);
-
+app.use("/communitymessage", communityMessageRouter);
 //----------------------------------------- END OF ROUTES---------------------------------------------------
 
 const socketIO = new Server(httpServer, {
