@@ -21,8 +21,7 @@ class PostController extends BaseController {
   };
 
   insertOne = async (req, res) => {
-    const { title, image, categories, description, userId, username, userPic } =
-      req.body;
+    const { title, image, categories, description, userId } = req.body;
     try {
       const uploadImg = await cloudinary.uploader.upload(image, {
         folder: "communityposts",
@@ -36,8 +35,8 @@ class PostController extends BaseController {
         },
         postCategories: categories,
         postDescription: description,
-        username: username,
-        userPic: userPic,
+        // username: username,
+        // userPic: userPic,
       });
       // console.log(communityPost)
       return res.json(communityPost);

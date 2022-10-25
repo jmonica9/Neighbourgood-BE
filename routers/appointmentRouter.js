@@ -6,6 +6,7 @@ class AppointmentRouter {
     this.controller = controller;
   }
   routes() {
+    router.get("/", this.controller.getAll);
     router.post("/getinfo", this.controller.getOne);
     router.put("/", this.controller.confirmOneAppointment);
     router.post("/", this.controller.insertOne);

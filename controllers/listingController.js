@@ -18,6 +18,7 @@ class ListingController extends BaseController {
       return res.status(400).json({ error: true, msg: err });
     }
   };
+
   markComplete = async (req, res) => {
     console.log("mark complete ran");
     const { listingId } = req.params;
@@ -143,28 +144,26 @@ class ListingController extends BaseController {
       type,
       username,
       location,
+      depositAmount,
     } = req.body;
     // console.log("inserting!");
 
     try {
       const uploadImg = await cloudinary.uploader.upload(image, {
         folder: `${type}`,
-        // max_width: 150,
-        // min_width: 100,
-        // width: "17vh",
-        //crop:scale / or wtv
       });
       const listing = await this.model.create({
         userId: userId,
         username: username,
         title: title,
-        image: image,
+        // image: image,
         cloudimg: {
           public_id: uploadImg.public_id,
           url: uploadImg.secure_url,
         },
         categories: categories,
         description: description,
+        depositAmount: depositAmount,
         type: type,
         location: location,
         completed: false,
@@ -187,7 +186,7 @@ class ListingController extends BaseController {
         const listingPicture = await this.model.findOneAndUpdate(
           { _id: listingId },
           {
-            image: image,
+            // image: image,
             cloudimg: {
               public_id: uploadImg.public_id,
               url: uploadImg.secure_url,
@@ -309,12 +308,12 @@ class ListingController extends BaseController {
   // };
 
   reserveListing = async (req, res) => {
-    const { listingId, requestorId } = req.body;
+    const { listingId, requestorId, dateOfTransaction } = req.body;
 
     try {
       const response = await this.model.findOneAndUpdate(
         { _id: listingId },
-        { reservedBy: requestorId },
+        { reservedBy: requestorId, dateOfTransaction: dateOfTransaction },
         { new: true }
       );
       return res.json(response);

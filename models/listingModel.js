@@ -18,7 +18,7 @@ const ListingSchema = new mongoose.Schema(
     },
     reserved: { type: Boolean },
     reservedBy: { type: String },
-    dateOfTransaction: { type: Date },
+    dateOfTransaction: { type: String },
     location: { type: String },
     depositAmount: { type: Number },
     chats: { type: Array },
