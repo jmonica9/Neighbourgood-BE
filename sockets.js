@@ -29,5 +29,11 @@ module.exports = (socketIO) => {
       socketIO.in(data.room).emit("refresh_chatroom", data);
     });
     /* SPECIFIC chatroom sockets stuff */
+
+    socket.on("refresh_communitychat_trigger", (data) => {
+      // console.log("frontend sent");
+      // console.log(data.room);
+      socketIO.in(data.room).emit("refresh_communitychat", data);
+    });
   });
 };
