@@ -47,6 +47,7 @@ class AuthController extends BaseController {
             username: req.body.username,
             email: req.body.email,
             location: req.body.location,
+            postcode: req.body.postcode,
           },
           { $setOnInsert: { password: hashedPassword } },
           { upsert: true, new: true }

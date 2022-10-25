@@ -38,10 +38,11 @@ class ListingRouter {
 
     //add requestorid
     router.post("/request", this.controller.addUserRequest);
+    //mark complete
+    router.get("/markcomplete/:listingId", this.controller.markComplete);
     //withdraw requestorid
     router.post("/withdraw", this.controller.withdrawUserRequest);
-    //mark complete
-    router.post("/markcomplete/:listingId", this.controller.markComplete);
+
     //all listings for one type where user is inside the requestorIds
     router.get("/:type/:userId/watchlist", this.controller.getMyTypeWatchlist);
 
