@@ -56,7 +56,7 @@ class ReviewController extends BaseController {
   insertOne = async (req, res) => {
     const { listingId } = req.params;
 
-    const { reviewText } = req.body;
+    const { reviewText, postedBy } = req.body;
     console.log(req.body, "inserting review!");
     try {
       const listing = await this.listingModel.findById(listingId);
@@ -68,6 +68,7 @@ class ReviewController extends BaseController {
         ownerId: listing.userId,
         reviewText: reviewText,
         type: listing.type,
+        postedBy: postedBy,
       });
       console.log("inserted a review", review);
       return res.json(review);
